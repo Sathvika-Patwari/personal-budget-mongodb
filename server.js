@@ -4,31 +4,32 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = 3000;
+const BudgetDataJSON = require('./budgetData.json');
 
 app.use('/heyo',express.static('public'));
 
 app.use(cors());
 
-const budget = {
-    myBudget: [
-        {
-            title: 'Eat out',
-            budget: 25
-        },
-        {
-            title: 'Rent',
-            budget: 275
-        },
-        {
-            title: 'Grocery',
-            budget: 110
-        },
-    ]
-};
+// const budget = {
+//     myBudget: [
+//         {
+//             title: 'Eat out',
+//             budget: 25
+//         },
+//         {
+//             title: 'Rent',
+//             budget: 275
+//         },
+//         {
+//             title: 'Grocery',
+//             budget: 110
+//         },
+//     ]
+// };
 
 
 app.get('/budget', (req, res) => {
-    res.json(budget);
+    res.json(BudgetDataJSON);
 });
 
 app.listen(port, () => {
