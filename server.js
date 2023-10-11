@@ -1,37 +1,55 @@
 // Budget API
 
-const express = require('express');
-const cors = require('cors');
+const mongoose = require("mongoose");
+const budgetModel = require("./models/budgetData_schema");
+
+let url = "mongodb://127.0.0.1:27017/personal_budget";
+const bodyParser = require("body-parser");
+const express = require("express");
+const cors = require("cors");
 const app = express();
 const port = 3000;
-const BudgetDataJSON = require('./budgetData.json');
-
-app.use('/heyo',express.static('public'));
+app.use(bodyParser.json());
+app.use("/heyo", express.static("public"));
 
 app.use(cors());
 
-// const budget = {
-//     myBudget: [
-//         {
-//             title: 'Eat out',
-//             budget: 25
-//         },
-//         {
-//             title: 'Rent',
-//             budget: 275
-//         },
-//         {
-//             title: 'Grocery',
-//             budget: 110
-//         },
-//     ]
-// };
-
-
-app.get('/budget', (req, res) => {
-    res.json(BudgetDataJSON);
+app.get("/budget", (req, res) => {
+  mongoose
+    .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+      console.log("Connected to the database");
+      budgetModel
+        .find({})
+        .then((data) => {
+          res.json(data);
+          console.log(data);
+          mongoose.connection.close();
+        })
+        .catch((connectionError) => {
+          console.log(connectionError);
+        });
+    });
 });
 
+app.post("/api/items", (req, res) => {
+  mongoose
+    .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+      console.log("Connected to the database");
+      const newItem = new budgetModel(req.body);
+      budgetModel
+        .insertMany(newItem)
+        .then((data) => {
+          res.json(data);
+          console.log(data);
+          mongoose.connection.close();
+        })
+        .catch((connectionError) => {
+          console.log(connectionError);
+        });
+    });
+});
 app.listen(port, () => {
-    console.log(`API served at http://localhost:${port}`);
+  console.log(`API served at http://localhost:${port}`);
 });
